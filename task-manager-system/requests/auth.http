@@ -1,0 +1,61 @@
+@baseUrl = http://localhost:8080
+
+@accessToken = 
+
+@refreshToken = 
+
+### 1. REGISTER USER
+POST {{baseUrl}}/api/v1/auth/register
+Content-Type: application/json
+
+{
+  "email": "",
+  "username": "",
+  "fullName": "",
+  "password": ""
+}
+
+### 2. LOGIN USER
+POST {{baseUrl}}/api/v1/auth/login
+Content-Type: application/json
+
+{
+  "identifier": "",
+  "password": ""
+}
+
+### 3. GET CURRENT USER
+GET {{baseUrl}}/api/v1/auth/me
+Authorization: Bearer {{accessToken}}
+
+### 4. LOGOUT USER
+POST {{baseUrl}}/api/v1/auth/logout
+Authorization: Bearer {{accessToken}}
+
+### 5. REFRESH ACCESS TOKEN
+POST {{baseUrl}}/api/v1/auth/refresh-token
+Content-Type: application/json
+Cookie: refreshToken={{refreshToken}}
+
+# {
+#   "refreshToken": "{{refreshToken}}"
+# }
+
+### 6. CHANGE CURRENT PASSWORD
+PATCH {{baseUrl}}/api/v1/auth/me/change-password
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+{
+  "oldPassword": "",
+  "newPassword": ""
+}
+
+### 7. DELETE ACCOUNT
+DELETE {{baseUrl}}/api/v1/auth/me
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+{
+  "password": ""
+}

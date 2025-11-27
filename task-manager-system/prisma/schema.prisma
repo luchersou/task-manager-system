@@ -1,0 +1,117 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model User {
+  id                  String       @id @default(uuid())
+  username            String       @unique
+  email               String       @unique
+  fullName            String?
+  password            String
+  refreshToken        String?
+  forgotPasswordToken String?
+  forgotPasswordExpiry DateTime?
+  createdAt           DateTime     @default(now())
+  updatedAt           DateTime     @updatedAt
+
+  createdProjects    Project[]       @relation("ProjectCreator")
+  projectMemberships ProjectMember[]
+  createdTasks       Task[]          @relation("TaskCreatedBy")
+  assignedTasks      Task[]          @relation("TaskAssignedTo")
+  createdSubTasks    SubTask[]
+
+  @@map("users")
+}
+
+model Project {
+  id          String     @id @default(uuid())
+  name        String     @unique
+  description String?
+  createdBy   String
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  creator User            @relation("ProjectCreator", fields: [createdBy], references: [id], onDelete: Cascade)
+  members ProjectMember[]
+  tasks   Task[]
+
+  @@index([createdBy])
+  @@map("projects")
+}
+
+model ProjectMember {
+  id        String      @id @default(uuid())
+  userId    String
+  projectId String
+  role      UserRole    @default(MEMBER)
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, projectId])
+  @@index([userId])
+  @@index([projectId])
+  @@map("project_members")
+}
+
+model Task {
+  id           String     @id @default(uuid())
+  title        String
+  description  String?
+  projectId    String
+  createdById  String 
+  assignedToId String?
+  status       TaskStatus @default(TODO)
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+
+  project     Project     @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  createdBy   User        @relation("TaskCreatedBy", fields: [createdById], references: [id], onDelete: Cascade)
+  assignedTo  User?       @relation("TaskAssignedTo", fields: [assignedToId], references: [id], onDelete: SetNull)
+  subtasks    SubTask[]
+
+  @@index([projectId])
+  @@index([createdById])
+  @@index([assignedToId])
+  @@index([status])
+  @@map("tasks")
+}
+
+model SubTask {
+  id          String   @id @default(uuid())
+  title       String
+  taskId      String
+  isCompleted Boolean  @default(false)
+  createdById String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  task      Task @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  createdBy User @relation(fields: [createdById], references: [id], onDelete: Cascade)
+
+  @@index([taskId])
+  @@index([createdById])
+  @@map("subtasks")
+}
+
+enum UserRole {
+  OWNER
+  ADMIN
+  MANAGER
+  MEMBER
+  VIEWER
+}
+
+enum TaskStatus {
+  TODO
+  IN_PROGRESS
+  DONE
+}
