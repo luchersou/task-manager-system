@@ -129,8 +129,7 @@ const getCurrentUser = asyncHandler(async (req, res) => {
 });
 
 const refreshAccessToken = asyncHandler(async (req, res) => {
-  const incomingRefreshToken =
-    req.cookies.refreshToken || req.body.refreshToken;
+  const incomingRefreshToken = req.cookies.refreshToken;
 
   if (!incomingRefreshToken) {
     throw new ApiError(401, "Unauthorized access");
@@ -154,11 +153,11 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
       throw new ApiError(401, "Refresh token expired or invalid");
     }
 
-    const options = {
+    const cookieOptions = {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
-      path: "/", 
+      path: "/",
     };
 
     const {
@@ -171,21 +170,17 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
       data: { refreshToken: newRefreshToken },
     });
 
-    return res
-      .status(200)
-      .cookie("accessToken", accessToken, options)
-      .cookie("refreshToken", newRefreshToken, options)
-      .json(
-        new ApiResponse(
-          200,
-          { accessToken, refreshToken: newRefreshToken },
-          "Access token refreshed"
-        )
-      );
+    res.cookie("accessToken", accessToken, cookieOptions);
+    res.cookie("refreshToken", newRefreshToken, cookieOptions);
+
+    return res.status(200).json(
+      new ApiResponse(200, {}, "Access token refreshed")
+    );
   } catch (error) {
     throw new ApiError(401, "Invalid refresh token");
   }
 });
+
 
 const changeCurrentPassword = asyncHandler(async (req, res) => {
   const { oldPassword, newPassword } = req.body;
@@ -213,18 +208,28 @@ const changeCurrentPassword = asyncHandler(async (req, res) => {
 
   const hashedPassword = await hashPassword(newPassword);
 
+  const cookieOptions = {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+    path: "/",
+  };
+
   await prisma.user.update({
     where: { id: req.user.id },
     data: {
       password: hashedPassword,
+      refreshToken: null, 
     },
   });
+
+  res.clearCookie("accessToken", cookieOptions);
+  res.clearCookie("refreshToken", cookieOptions);
 
   return res
     .status(200)
     .json(new ApiResponse(200, {}, "Password changed successfully"));
 });
-
 
 const deleteAccount = asyncHandler(async (req, res) => {
   const userId = req.user?.id;
