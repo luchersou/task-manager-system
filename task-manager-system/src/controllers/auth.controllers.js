@@ -41,16 +41,10 @@ const registerUser = asyncHandler(async (req, res) => {
     }
   });
 
-  if (!user) {
-    throw new ApiError(500, "Something went wrong while registering a user");
-  }
-
-  const { password: _password, refreshToken: _refreshToken, ...safeUser } = user;
-
   return res.status(201).json(
     new ApiResponse(
       201,
-      { user: safeUser },
+      { user },
       "User registered successfully"
     )
   );

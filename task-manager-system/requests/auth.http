@@ -1,18 +1,18 @@
 @baseUrl = http://localhost:8080
 
-@accessToken = 
+@accessToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImQ4MWQ0ZWRiLTVjODQtNDVhYi04NTkyLTIxNWRmOWNjMTJlNiIsImVtYWlsIjoiVEVTVEUxMjNASE9KRS5DT00iLCJ1c2VybmFtZSI6IkxVQ0hFUiBzb3UgZGUgdGVzdCIsImlhdCI6MTc2NDI5NDQxNywiZXhwIjoxNzY0Mjk1MzE3fQ.etbguxxh6CEub3UHd6VeTE_YYqURxFb91-5QxIVN3O4
 
-@refreshToken = 
+@refreshToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImQ4MWQ0ZWRiLTVjODQtNDVhYi04NTkyLTIxNWRmOWNjMTJlNiIsImlhdCI6MTc2NDI5NDQxNywiZXhwIjoxNzY0ODk5MjE3fQ.q7b_AjCtgH3Lh8gtnxhv41Xo2_bBHClCZpvEJONuark
 
 ### 1. REGISTER USER
 POST {{baseUrl}}/api/v1/auth/register
 Content-Type: application/json
 
 {
-  "email": "",
-  "username": "",
-  "fullName": "",
-  "password": ""
+  "email": "TESTE123@HOJE.COM",
+  "username": "LUCHER sou de test",
+  "fullName": "LUCAS SOUZA",
+  "password": "1234567"
 }
 
 ### 2. LOGIN USER
@@ -20,8 +20,8 @@ POST {{baseUrl}}/api/v1/auth/login
 Content-Type: application/json
 
 {
-  "identifier": "",
-  "password": ""
+  "identifier": "TESTE123@HOJE.COM",
+  "password": "1234567"
 }
 
 ### 3. GET CURRENT USER
