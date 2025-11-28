@@ -51,10 +51,10 @@ const registerUser = asyncHandler(async (req, res) => {
 });
 
 const login = asyncHandler(async (req, res) => {
-  const { identifier, password } = req.body; 
+  const { identifier, password } = req.body;
 
-  if (!identifier) {
-    throw new ApiError(400, "Email or username is required");
+  if (!identifier || !password) {
+    throw new ApiError(400, "Email/username and password are required");
   }
 
   const user = await prisma.user.findFirst({
@@ -67,7 +67,7 @@ const login = asyncHandler(async (req, res) => {
   });
 
   if (!user) {
-    throw new ApiError(400, "User does not exist");
+    throw new ApiError(400, "Invalid credentials");
   }
 
   const isPasswordValid = await comparePassword(password, user.password);
@@ -82,8 +82,8 @@ const login = asyncHandler(async (req, res) => {
 
   const cookieOptions = {
     httpOnly: true,
-    secure: true,
-    sameSite: "strict",
+    secure: process.env.NODE_ENV === "production",
+    sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
   };
 
   return res
@@ -93,7 +93,7 @@ const login = asyncHandler(async (req, res) => {
     .json(
       new ApiResponse(
         200,
-        { user: safeUser, accessToken, refreshToken },
+        { user: safeUser },
         "User logged in successfully"
       )
     );
