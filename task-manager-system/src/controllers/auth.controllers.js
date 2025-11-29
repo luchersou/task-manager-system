@@ -4,6 +4,7 @@ import { ApiResponse } from "../utils/api-response.js";
 import { asyncHandler } from "../utils/async-handler.js";
 import { hashPassword, comparePassword } from "../utils/password.js"
 import { generateAccessAndRefreshTokens } from "../utils/generateAccessAndRefreshTokens.js"
+import { cookieOptions } from "../utils/cookieConfig.js";
 import jwt from "jsonwebtoken";
 
 const registerUser = asyncHandler(async (req, res) => {
@@ -80,13 +81,6 @@ const login = asyncHandler(async (req, res) => {
 
   const { password: _, refreshToken: __, ...safeUser } = user;
 
-  const cookieOptions = {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
-    path: "/",
-  };
-
   return res
     .status(200)
     .cookie("accessToken", accessToken, cookieOptions)
@@ -106,17 +100,10 @@ const logoutUser = asyncHandler(async (req, res) => {
     data: { refreshToken: "" },
   });
 
-  const options = {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
-    path: "/", 
-  };
-
   return res
     .status(200)
-    .clearCookie("accessToken", options)
-    .clearCookie("refreshToken", options)
+    .clearCookie("accessToken", cookieOptions)
+    .clearCookie("refreshToken", cookieOptions)
     .json(new ApiResponse(200, {}, "User logged out"));
 });
 
@@ -152,13 +139,6 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
     if (incomingRefreshToken !== user.refreshToken) {
       throw new ApiError(401, "Refresh token expired or invalid");
     }
-
-    const cookieOptions = {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
-      path: "/",
-    };
 
     const {
       accessToken,
@@ -208,13 +188,6 @@ const changeCurrentPassword = asyncHandler(async (req, res) => {
 
   const hashedPassword = await hashPassword(newPassword);
 
-  const cookieOptions = {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
-    path: "/",
-  };
-
   await prisma.user.update({
     where: { id: req.user.id },
     data: {
@@ -249,13 +222,6 @@ const deleteAccount = asyncHandler(async (req, res) => {
   await prisma.user.delete({
     where: { id: userId },
   });
-
-  const cookieOptions = {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
-    path: "/", 
-  };
 
   return res
     .status(200)

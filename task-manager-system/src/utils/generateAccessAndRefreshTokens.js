@@ -24,7 +24,7 @@ const generateRefreshToken = (user) => {
 
 export const generateAccessAndRefreshTokens = async (userId) => {
   try {
-    console.log("1️⃣ Buscando usuário:", userId);
+    console.log("Searching user:", userId);
     
     const user = await prisma.user.findUnique({
       where: { id: userId },

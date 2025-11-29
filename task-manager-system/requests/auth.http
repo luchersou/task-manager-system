@@ -1,18 +1,14 @@
 @baseUrl = http://localhost:8080
 
-@accessToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImQ4MWQ0ZWRiLTVjODQtNDVhYi04NTkyLTIxNWRmOWNjMTJlNiIsImVtYWlsIjoiVEVTVEUxMjNASE9KRS5DT00iLCJ1c2VybmFtZSI6IkxVQ0hFUiBzb3UgZGUgdGVzdCIsImlhdCI6MTc2NDI5NDQxNywiZXhwIjoxNzY0Mjk1MzE3fQ.etbguxxh6CEub3UHd6VeTE_YYqURxFb91-5QxIVN3O4
-
-@refreshToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImQ4MWQ0ZWRiLTVjODQtNDVhYi04NTkyLTIxNWRmOWNjMTJlNiIsImlhdCI6MTc2NDI5NDQxNywiZXhwIjoxNzY0ODk5MjE3fQ.q7b_AjCtgH3Lh8gtnxhv41Xo2_bBHClCZpvEJONuark
-
 ### 1. REGISTER USER
 POST {{baseUrl}}/api/v1/auth/register
 Content-Type: application/json
 
 {
-  "email": "TESTE123@HOJE.COM",
-  "username": "LUCHER sou de test",
-  "fullName": "LUCAS SOUZA",
-  "password": "1234567"
+  "email": "",
+  "username": "",
+  "fullName": "",
+  "password": ""
 }
 
 ### 2. LOGIN USER
@@ -20,31 +16,23 @@ POST {{baseUrl}}/api/v1/auth/login
 Content-Type: application/json
 
 {
-  "identifier": "TESTE123@HOJE.COM",
-  "password": "1234567"
+  "identifier": "",
+  "password": ""
 }
 
 ### 3. GET CURRENT USER
 GET {{baseUrl}}/api/v1/auth/me
-Authorization: Bearer {{accessToken}}
 
 ### 4. LOGOUT USER
 POST {{baseUrl}}/api/v1/auth/logout
-Authorization: Bearer {{accessToken}}
 
 ### 5. REFRESH ACCESS TOKEN
 POST {{baseUrl}}/api/v1/auth/refresh-token
 Content-Type: application/json
-Cookie: refreshToken={{refreshToken}}
-
-# {
-#   "refreshToken": "{{refreshToken}}"
-# }
 
 ### 6. CHANGE CURRENT PASSWORD
 PATCH {{baseUrl}}/api/v1/auth/me/change-password
 Content-Type: application/json
-Authorization: Bearer {{accessToken}}
 
 {
   "oldPassword": "",
@@ -54,7 +42,6 @@ Authorization: Bearer {{accessToken}}
 ### 7. DELETE ACCOUNT
 DELETE {{baseUrl}}/api/v1/auth/me
 Content-Type: application/json
-Authorization: Bearer {{accessToken}}
 
 {
   "password": ""
