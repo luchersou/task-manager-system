@@ -2,7 +2,8 @@ import { prisma } from "../prisma.js";
 import { ApiResponse } from "../utils/api-response.js";
 import { ApiError } from "../utils/api-error.js";
 import { asyncHandler } from "../utils/async-handler.js";
-import { UserRole } from "@prisma/client";
+import pkg from "@prisma/client";
+const { UserRole } = pkg;
 
 const getProjects = asyncHandler(async (req, res) => {
   const userId = req.user.id;
