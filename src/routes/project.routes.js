@@ -60,7 +60,7 @@ router
   );
 
 router
-  .route("/:projectId/members/:userId")
+  .route("/:projectId/members/:memberId")
   .delete(
     validateProjectPermission(ADMIN_ROLES),
     validate(deleteMemberSchema),

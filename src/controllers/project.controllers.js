@@ -65,15 +65,18 @@ const createProject = asyncHandler(async (req, res) => {
     data: {
       name,
       description,
-      createdBy: req.user.id, 
+      createdBy: req.user.id,
+      members: {
+        create: {
+          userId: req.user.id,
+          role: UserRole.OWNER,
+        },
+      },
     },
-  });
-
-  await prisma.projectMember.create({
-    data: {
-      userId: req.user.id,
-      projectId: project.id,
-      role: UserRole.OWNER,
+    include: {
+      members: {
+        where: { userId: req.user.id },
+      },
     },
   });
 
@@ -257,10 +260,11 @@ const updateMemberRole = asyncHandler(async (req, res) => {
 });
 
 const deleteMember = asyncHandler(async (req, res) => {
-  const { projectId, userId } = req.params;
+  const { projectId, memberId } = req.params;
+  const requesterId = req.user.id;
 
   const memberToDelete = await prisma.projectMember.findFirst({
-    where: { projectId, userId },
+    where: { id: memberId, projectId },
     include: {
       project: { select: { createdBy: true } },
       user: { select: { id: true, username: true, fullName: true, email: true } },
@@ -271,14 +275,21 @@ const deleteMember = asyncHandler(async (req, res) => {
     throw new ApiError(404, "Project member not found");
   }
 
-  if (memberToDelete.project.createdBy === userId){
+  if (memberToDelete.project.createdBy === memberToDelete.userId) {
     throw new ApiError(400, "Cannot remove the project owner");
   }
 
-  await prisma.projectMember.delete({ where: { id: memberToDelete.id } });
+  if (memberToDelete.role === "ADMIN") {
+    const isOwner = memberToDelete.project.createdBy === requesterId;
+    if (!isOwner) {
+      throw new ApiError(403, "Only the owner can remove admins");
+    }
+  }
 
-  return res.status(204).json(
-    new ApiResponse(204, { removedUser: memberToDelete.user }, "Project member removed successfully")
+  await prisma.projectMember.delete({ where: { id: memberId } });
+
+  return res.status(200).json(
+    new ApiResponse(200, { removedUser: memberToDelete.user }, "Member removed successfully")
   );
 });
 

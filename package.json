@@ -2,9 +2,11 @@
   "name": "todo-app",
   "version": "1.0.0",
   "main": "index.js",
+  "type": "module",
   "scripts": {
     "dev": "nodemon src/index.js",
-    "start": "node src/index.js"
+    "start": "node src/index.js",
+    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js"
   },
   "keywords": [],
   "author": "",
@@ -24,6 +26,7 @@
     "zod": "^4.1.12"
   },
   "devDependencies": {
+    "jest": "^30.2.0",
     "nodemon": "^3.1.11"
   }
 }

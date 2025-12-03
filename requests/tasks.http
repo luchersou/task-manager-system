@@ -6,8 +6,6 @@
 
 @projectId = 
 
-@accessToken = 
-
 ############################################################
 ### TASKS
 ############################################################
@@ -15,7 +13,6 @@
 ### Create Task 
 POST {{baseUrl}}/api/v1/tasks/projects/{{projectId}}/tasks
 Content-Type: application/json
-Authorization: Bearer {{accessToken}}
 
 {
   "title": "",
@@ -29,26 +26,23 @@ Authorization: Bearer {{accessToken}}
 ### Get All Tasks 
 GET {{baseUrl}}/api/v1/tasks/projects/{{projectId}}/tasks
 Content-Type: application/json
-Authorization: Bearer {{accessToken}}
 
 ### Get Task by ID 
 GET {{baseUrl}}/api/v1/tasks/{{projectId}}/tasks/{{taskId}}
 Content-Type: application/json
-Authorization: Bearer {{accessToken}}
 
 ### Update Task 
 PATCH {{baseUrl}}/api/v1/tasks/{{projectId}}/tasks/{{taskId}}
 Content-Type: application/json
-Authorization: Bearer {{accessToken}}
 
 {
-  "description": ""
+  "description": "",
+  "status": ""
 }
 
 ### Delete Task 
 DELETE {{baseUrl}}/api/v1/tasks/{{projectId}}/tasks/{{taskId}}
 Content-Type: application/json
-Authorization: Bearer {{accessToken}}
 
 
 ############################################################
@@ -58,7 +52,6 @@ Authorization: Bearer {{accessToken}}
 ### Create SubTask
 POST {{baseUrl}}/api/v1/tasks/{{taskId}}/subtasks
 Content-Type: application/json
-Authorization: Bearer {{accessToken}}
 
 {
   "title": ""
@@ -67,7 +60,6 @@ Authorization: Bearer {{accessToken}}
 ### Update SubTask
 PATCH {{baseUrl}}/api/v1/tasks/{{taskId}}/subtasks/{{subTaskId}}
 Content-Type: application/json
-Authorization: Bearer {{accessToken}}
 
 {
   "title": ""
@@ -76,4 +68,3 @@ Authorization: Bearer {{accessToken}}
 ### Delete SubTask
 DELETE {{baseUrl}}/api/v1/tasks/{{taskId}}/subtasks/{{subTaskId}}
 Content-Type: application/json
-Authorization: Bearer {{accessToken}}

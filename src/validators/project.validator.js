@@ -78,7 +78,7 @@ const deleteMemberSchema = z.object({
     projectId: z.uuid({
       error: "Project ID is required"
     }),
-    userId: z.uuid({
+    memberId: z.uuid({
       error: "User ID is required"
     }),
   }),
