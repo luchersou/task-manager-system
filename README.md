@@ -2,6 +2,17 @@
 
 A robust project and task management REST API built with Node.js, Express, Prisma ORM, and PostgreSQL (Supabase).
 
+## 🌐 Live Demo
+
+The API is deployed and available at:
+```
+https://task-manager-system-uqus.onrender.com
+```
+
+**Base API URL**: `https://task-manager-system-uqus.onrender.com/api/v1`
+
+> **Note**: The application is hosted on Render's free tier, so the first request may take a few seconds as the server spins up from sleep mode.
+
 ## 📋 Table of Contents
 
 - [Features](#features)
@@ -47,6 +58,7 @@ A robust project and task management REST API built with Node.js, Express, Prism
 - **Validation**: Zod
 - **HTTP Logging**: Morgan
 - **Security**: CORS, cookie-parser
+- **Deployment**: Render
 
 ## 🚀 Getting Started
 
@@ -95,9 +107,10 @@ The API will be available at `http://localhost:8000`
 ## 📚 API Documentation
 
 ### Base URL
-```
-http://localhost:8000/api/v1
-```
+
+**Production**: `https://task-manager-system-uqus.onrender.com/api/v1`
+
+**Local Development**: `http://localhost:8000/api/v1`
 
 ### Endpoints
 
@@ -254,6 +267,23 @@ Centralized error handling with consistent response format.
 }
 ```
 
+## 🚀 Deployment
+
+This application is deployed on [Render](https://render.com) with the following configuration:
+
+- **Platform**: Render Web Service
+- **Database**: Supabase PostgreSQL
+- **Build Command**: `npm install && npx prisma generate && npx prisma migrate deploy`
+- **Start Command**: `npm start`
+
+### Deploying Your Own Instance
+
+1. Fork this repository
+2. Create a new Web Service on Render
+3. Connect your GitHub repository
+4. Set up environment variables in Render dashboard
+5. Deploy!
+
 ## 📄 License
 
 This project is licensed under the MIT License.
@@ -261,4 +291,3 @@ This project is licensed under the MIT License.
 ## 👤 Author
 
 Lucas Herzinger Souza
-
