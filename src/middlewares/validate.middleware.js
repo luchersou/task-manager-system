@@ -2,26 +2,30 @@ import { ZodError } from "zod";
 
 export const validate = (schema) => (req, res, next) => {
   try {
-    schema.parse({
-      body: req.body,
-      params: req.params,
-      query: req.query,
-    });
-
+    const toValidate = {};
+    
+    if (schema.shape?.body) toValidate.body = req.body;
+    if (schema.shape?.params) toValidate.params = req.params;
+    if (schema.shape?.query) toValidate.query = req.query;
+    
+    const validated = schema.parse(toValidate);
+    
+    if (validated.body) req.body = validated.body;
+    if (validated.params) req.params = validated.params;
+    if (validated.query) req.query = validated.query;
+    
     next();
   } catch (error) {
-    console.log("ZOD RAW ERROR =>", error);
     if (error instanceof ZodError) {
-      console.log("ZOD ISSUES =>", error.issues);
-
       const errors = error.issues.map(err => ({
-        path: err.path.join("."),
+        field: err.path.slice(1).join(".") || err.path.join("."),
         message: err.message,
+        code: err.code,
       }));
 
       return res.status(400).json({
         success: false,
-        message: errors[0]?.message || "Validation error", // ✅ agora personalizado
+        message: "Validation failed",
         errors,
       });
     }
