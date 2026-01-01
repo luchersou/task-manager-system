@@ -1,46 +1,19 @@
-import { prisma } from "../prisma.js";
-import { ApiError } from "../utils/api-error.js";
 import { ApiResponse } from "../utils/api-response.js";
 import { asyncHandler } from "../utils/async-handler.js";
-import { hashPassword, comparePassword } from "../utils/password.js"
-import { generateAccessAndRefreshTokens } from "../utils/generateAccessAndRefreshTokens.js"
+import { 
+  registerUserService, 
+  loginService, 
+  logoutUserService,
+  refreshAccessTokenService,
+  changeCurrentPasswordService,
+  deleteAccountService
+} from "../services/auth.services.js";
 import { cookieOptions } from "../utils/cookieConfig.js";
-import jwt from "jsonwebtoken";
 
-const registerUser = asyncHandler(async (req, res) => {
+export const registerUser = asyncHandler(async (req, res) => {
   const { email, username, password, fullName } = req.body;
 
-  if (!email || !username || !password) {
-    throw new ApiError(400, "All fields are required: email, username, password");
-  }
-  const existedUser = await prisma.user.findFirst({
-    where: {
-      OR: [{ email }, { username }],
-    },
-  });
-
-  if (existedUser) {
-    throw new ApiError(409, "User with email or username already exists", []);
-  }
-
-  const hashedPassword = await hashPassword(password);
-
-  const user = await prisma.user.create({
-    data: {
-      email,
-      username,
-      password: hashedPassword,
-      fullName,
-    },
-    select: {
-      id: true,
-      email: true,
-      username: true,
-      fullName: true,
-      createdAt: true,
-      updatedAt: true,
-    }
-  });
+  const user = await registerUserService({ email, username, password, fullName });
 
   return res.status(201).json(
     new ApiResponse(
@@ -51,35 +24,10 @@ const registerUser = asyncHandler(async (req, res) => {
   );
 });
 
-const login = asyncHandler(async (req, res) => {
+export const login = asyncHandler(async (req, res) => {
   const { identifier, password } = req.body;
 
-  if (!identifier || !password) {
-    throw new ApiError(400, "Email/username and password are required");
-  }
-
-  const user = await prisma.user.findFirst({
-    where: {
-      OR: [
-        { email: identifier },
-        { username: identifier }
-      ]
-    }
-  });
-
-  if (!user) {
-    throw new ApiError(400, "Invalid credentials");
-  }
-
-  const isPasswordValid = await comparePassword(password, user.password);
-  if (!isPasswordValid) {
-    throw new ApiError(400, "Invalid credentials");
-  }
-
-  const { accessToken, refreshToken } =
-    await generateAccessAndRefreshTokens(user.id);
-
-  const { password: _, refreshToken: __, ...safeUser } = user;
+  const { safeUser, accessToken, refreshToken } = await loginService({ identifier, password });
 
   return res
     .status(200)
@@ -94,11 +42,8 @@ const login = asyncHandler(async (req, res) => {
     );
 });
 
-const logoutUser = asyncHandler(async (req, res) => {
-  await prisma.user.update({
-    where: { id: req.user.id },
-    data: { refreshToken: "" },
-  });
+export const logoutUser = asyncHandler(async (req, res) => {
+  await logoutUserService(req.user.id);
 
   return res
     .status(200)
@@ -115,113 +60,35 @@ const getCurrentUser = asyncHandler(async (req, res) => {
     );
 });
 
-const refreshAccessToken = asyncHandler(async (req, res) => {
+export const refreshAccessToken = asyncHandler(async (req, res) => {
   const incomingRefreshToken = req.cookies.refreshToken;
 
-  if (!incomingRefreshToken) {
-    throw new ApiError(401, "Unauthorized access");
-  }
-
-  try {
-    const decodedToken = jwt.verify(
-      incomingRefreshToken,
-      process.env.REFRESH_TOKEN_SECRET
-    );
-
-    const user = await prisma.user.findUnique({
-      where: { id: decodedToken.id },
-    });
-
-    if (!user) {
-      throw new ApiError(401, "Invalid refresh token");
-    }
-
-    if (incomingRefreshToken !== user.refreshToken) {
-      throw new ApiError(401, "Refresh token expired or invalid");
-    }
-
-    const {
-      accessToken,
-      refreshToken: newRefreshToken,
-    } = await generateAccessAndRefreshTokens(user.id);
-
-    await prisma.user.update({
-      where: { id: user.id },
-      data: { refreshToken: newRefreshToken },
-    });
-
-    res.cookie("accessToken", accessToken, cookieOptions);
-    res.cookie("refreshToken", newRefreshToken, cookieOptions);
-
-    return res.status(200).json(
-      new ApiResponse(200, {}, "Access token refreshed")
-    );
-  } catch (error) {
-    throw new ApiError(401, "Invalid refresh token");
-  }
-});
-
-
-const changeCurrentPassword = asyncHandler(async (req, res) => {
-  const { oldPassword, newPassword } = req.body;
-
-  if (!oldPassword || !newPassword) {
-    throw new ApiError(400, "Old password and new password are required");
-  }
-
-  if (!req.user?.id) {
-    throw new ApiError(401, "Unauthorized");
-  }
-
-  const user = await prisma.user.findUnique({
-    where: { id: req.user.id },
-  });
-
-  if (!user) {
-    throw new ApiError(404, "User not found");
-  }
-
-  const isPasswordValid = await comparePassword(oldPassword, user.password);
-  if (!isPasswordValid) {
-    throw new ApiError(400, "Invalid old password");
-  }
-
-  const hashedPassword = await hashPassword(newPassword);
-
-  await prisma.user.update({
-    where: { id: req.user.id },
-    data: {
-      password: hashedPassword,
-      refreshToken: null, 
-    },
-  });
-
-  res.clearCookie("accessToken", cookieOptions);
-  res.clearCookie("refreshToken", cookieOptions);
+  const { accessToken, refreshToken } = await refreshAccessTokenService(incomingRefreshToken);
 
   return res
     .status(200)
+    .cookie("accessToken", accessToken, cookieOptions)
+    .cookie("refreshToken", refreshToken, cookieOptions)
+    .json(
+      new ApiResponse(200, {}, "Access token refreshed")
+    );
+});
+
+
+export const changeCurrentPassword = asyncHandler(async (req, res) => {
+  const { oldPassword, newPassword } = req.body;
+
+  await changeCurrentPasswordService(req.user.id, { oldPassword, newPassword });
+
+  return res
+    .status(200)
+    .clearCookie("accessToken", cookieOptions)
+    .clearCookie("refreshToken", cookieOptions)
     .json(new ApiResponse(200, {}, "Password changed successfully"));
 });
 
-const deleteAccount = asyncHandler(async (req, res) => {
-  const userId = req.user?.id;
-
-  if (!userId) {
-    throw new ApiError(401, "Unauthorized");
-  }
-
-  const existingUser = await prisma.user.findUnique({
-    where: { id: userId },
-  });
-
-  if (!existingUser) {
-    throw new ApiError(404, "User not found");
-  }
-
-  await prisma.user.delete({
-    where: { id: userId },
-  });
+export const deleteAccount = asyncHandler(async (req, res) => {
+  await deleteAccountService(req.user.id);
 
   return res
     .status(200)
@@ -241,5 +108,3 @@ export {
   changeCurrentPassword,
   deleteAccount,
 };
-
-
