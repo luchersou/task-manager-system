@@ -1,13 +1,9 @@
 import { prisma } from "../prisma.js";
-import { ApiResponse } from "../utils/api-response.js";
 import { ApiError } from "../utils/api-error.js";
-import { asyncHandler } from "../utils/async-handler.js";
 import pkg from "@prisma/client";
 const { UserRole } = pkg;
 
-const getProjects = asyncHandler(async (req, res) => {
-  const userId = req.user.id;
-
+export const getProjectsService = async (userId) => {
   const memberships = await prisma.projectMember.findMany({
     where: { userId },
     include: {
@@ -33,19 +29,15 @@ const getProjects = asyncHandler(async (req, res) => {
     id: m.project.id,
     name: m.project.name,
     description: m.project.description,
-    membersCount: m.project._count.members, 
+    membersCount: m.project._count.members,
     role: m.role,
     createdBy: m.project.creator,
   }));
 
-  return res
-    .status(200)
-    .json(new ApiResponse(200, projects, "Projects fetched successfully"));
-});
+  return projects;
+};
 
-const getProjectById = asyncHandler(async (req, res) => {
-  const { projectId } = req.params;
-
+export const getProjectByIdService = async (projectId) => {
   const project = await prisma.project.findUnique({
     where: { id: projectId },
   });
@@ -54,42 +46,33 @@ const getProjectById = asyncHandler(async (req, res) => {
     throw new ApiError(404, "Project not found");
   }
 
-  return res.status(200).json(
-    new ApiResponse(200, project, "Project fetched successfully")
-  );
-});
+  return project;
+};
 
-const createProject = asyncHandler(async (req, res) => {
-  const { name, description } = req.body;
-
+export const createProjectService = async (userId, { name, description }) => {
   const project = await prisma.project.create({
     data: {
       name,
       description,
-      createdBy: req.user.id,
+      createdBy: userId,
       members: {
         create: {
-          userId: req.user.id,
+          userId: userId,
           role: UserRole.OWNER,
         },
       },
     },
     include: {
       members: {
-        where: { userId: req.user.id },
+        where: { userId: userId },
       },
     },
   });
 
-  return res.status(201).json(
-    new ApiResponse(201, project, "Project created successfully")
-  );
-});
+  return project;
+};
 
-const updateProject = asyncHandler(async (req, res) => {
-  const { name, description } = req.body;
-  const { projectId } = req.params;
-
+export const updateProjectService = async (projectId, { name, description }) => {
   const project = await prisma.project.update({
     where: { id: projectId },
     data: {
@@ -104,27 +87,18 @@ const updateProject = asyncHandler(async (req, res) => {
     },
   });
 
-  return res
-    .status(200)
-    .json(new ApiResponse(200, project, "Project updated successfully"));
-});
+  return project;
+};
 
-const deleteProject = asyncHandler(async (req, res) => {
-  const { projectId } = req.params;
-
+export const deleteProjectService = async (projectId) => {
   const project = await prisma.project.delete({
     where: { id: projectId },
   });
 
-  return res.status(204).json(
-    new ApiResponse(204, project, "Project deleted successfully")
-  );
-});
+  return project;
+};
 
-const addMembersToProject = asyncHandler(async (req, res) => {
-  const { email, role } = req.body;
-  const { projectId } = req.params;
-
+export const addMembersToProjectService = async (projectId, { email, role }) => {
   const user = await prisma.user.findUnique({
     where: { email },
   });
@@ -148,14 +122,11 @@ const addMembersToProject = asyncHandler(async (req, res) => {
     },
   });
 
-  return res.status(200).json(
-    new ApiResponse(200, {}, "Project member added successfully")
-  );
-});
+  return true;
+};
 
-const getProjectMembers = asyncHandler(async (req, res) => {
-  const { projectId } = req.params;
-
+export const getProjectMembersService = async (projectId) => {
+  // Busca o projeto com seus membros
   const project = await prisma.project.findUnique({
     where: { id: projectId },
     select: {
@@ -187,21 +158,10 @@ const getProjectMembers = asyncHandler(async (req, res) => {
     throw new ApiError(404, "Project not found");
   }
 
-  return res
-    .status(200)
-    .json(
-      new ApiResponse(
-        200,
-        project.members,
-        "Project members fetched successfully"
-      )
-    );
-});
+  return project.members;
+};
 
-const updateMemberRole = asyncHandler(async (req, res) => {
-  const { projectId, userId } = req.params;
-  const { newRole } = req.body;
-
+export const updateMemberRoleService = async (projectId, userId, newRole) => {
   const projectMember = await prisma.projectMember.findFirst({
     where: {
       projectId,
@@ -251,19 +211,10 @@ const updateMemberRole = asyncHandler(async (req, res) => {
     },
   });
 
-  return res.status(200).json(
-    new ApiResponse(
-      200,
-      updatedMember,
-      "Project member role updated successfully"
-    )
-  );
-});
+  return updatedMember;
+};
 
-const deleteMember = asyncHandler(async (req, res) => {
-  const { projectId, memberId } = req.params;
-  const requesterId = req.user.id;
-
+export const deleteMemberService = async (projectId, memberId, requesterId) => {
   const memberToDelete = await prisma.projectMember.findFirst({
     where: { id: memberId, projectId },
     include: {
@@ -289,19 +240,5 @@ const deleteMember = asyncHandler(async (req, res) => {
 
   await prisma.projectMember.delete({ where: { id: memberId } });
 
-  return res.status(200).json(
-    new ApiResponse(200, { removedUser: memberToDelete.user }, "Member removed successfully")
-  );
-});
-
-export {
-  addMembersToProject,
-  createProject,
-  deleteMember,
-  getProjects,
-  getProjectById,
-  getProjectMembers,
-  updateProject,
-  deleteProject,
-  updateMemberRole,
+  return memberToDelete.user;
 };

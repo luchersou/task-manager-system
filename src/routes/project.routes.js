@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { UserRole } from "@prisma/client";
-import * as projectController from "../controllers/project.controllers.js";
+import * as projectController from "../controllers/project.controller.js";
 import { validate } from "../middlewares/validate.middleware.js";
 import { validateProjectPermission, verifyJWT } from "../middlewares/auth.middleware.js";
 import { 

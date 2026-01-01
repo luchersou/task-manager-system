@@ -4,7 +4,7 @@ const { UserRole } = pkg;
 import { verifyJWT, validateProjectPermission } from "../middlewares/auth.middleware.js";
 import { validate } from "../middlewares/validate.middleware.js";
 import * as schemas from "../validators/task.validator.js";
-import * as taskController from "../controllers/task.controllers.js";
+import * as taskController from "../controllers/task.controller.js";
 
 const CONTRIBUTOR_ROLES = [UserRole.OWNER, UserRole.ADMIN, UserRole.MANAGER, UserRole.MEMBER];
 const MANAGER_ROLES = [UserRole.OWNER, UserRole.ADMIN, UserRole.MANAGER];

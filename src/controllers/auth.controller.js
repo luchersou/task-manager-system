@@ -98,13 +98,3 @@ export const deleteAccount = asyncHandler(async (req, res) => {
       new ApiResponse(200, {}, "Account deleted successfully")
     );
 });
-
-export {
-  registerUser,
-  login,
-  logoutUser,
-  getCurrentUser,
-  refreshAccessToken,
-  changeCurrentPassword,
-  deleteAccount,
-};
