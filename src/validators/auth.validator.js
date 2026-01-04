@@ -16,6 +16,10 @@ const registerUserSchema = z.object({
       })
       .min(6, "Password must be at least 6 characters long")
       .max(100, "Password must not exceed 100 characters"),
+    fullName: z
+      .string()
+      .min(1, "Full name cannot be empty")
+      .optional()
   })
 });
 

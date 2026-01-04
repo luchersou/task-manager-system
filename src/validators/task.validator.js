@@ -24,8 +24,8 @@ const createTaskSchema = z.object({
         error: "description must be a string",
       })
       .optional(),
-    assignedTo: z
-      .uuid("assignedTo must be a valid UUID")
+    assignedToId: z
+      .uuid("assignedToId must be a valid UUID")
       .optional(),
     status: z
       .enum(TaskStatus, {

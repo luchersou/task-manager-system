@@ -7,7 +7,7 @@ import {
   refreshAccessTokenService,
   changeCurrentPasswordService,
   deleteAccountService
-} from "../services/auth.services.js";
+} from "../services/auth.service.js";
 import { cookieOptions } from "../utils/cookieConfig.js";
 
 export const registerUser = asyncHandler(async (req, res) => {
@@ -52,7 +52,7 @@ export const logoutUser = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, {}, "User logged out"));
 });
 
-const getCurrentUser = asyncHandler(async (req, res) => {
+export const getCurrentUser = asyncHandler(async (req, res) => {
   return res
     .status(200)
     .json(
