@@ -40,8 +40,8 @@ import pkg from "@prisma/client";
 const { UserRole } = pkg;
 
 describe("ProjectService", () => {
-  
-  beforeEach(() => {
+
+    afterEach(() => {
       jest.clearAllMocks();
     });
 

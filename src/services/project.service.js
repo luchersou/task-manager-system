@@ -126,7 +126,6 @@ export const addMembersToProjectService = async (projectId, { email, role }) => 
 };
 
 export const getProjectMembersService = async (projectId) => {
-  // Busca o projeto com seus membros
   const project = await prisma.project.findUnique({
     where: { id: projectId },
     select: {
