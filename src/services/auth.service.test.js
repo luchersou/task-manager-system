@@ -41,9 +41,6 @@ const {
   deleteAccountService
  } = await import("./auth.service.js");
 
-import pkg from "@prisma/client";
-const { UserRole } = pkg;
-
 describe("registerUserService", () => {
   
   afterEach(() => {
