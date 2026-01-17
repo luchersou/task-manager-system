@@ -1,36 +1,36 @@
-import { jest } from "@jest/globals";
+import { describe, it, expect, afterEach, vi } from "vitest";
 
-jest.unstable_mockModule("../prisma.js", () => ({
+vi.mock("../prisma.js", () => ({
   prisma: {
     project: {
-      findUnique: jest.fn(),
+      findUnique: vi.fn(),
     },
     task: {
-      findMany: jest.fn(),
-      create: jest.fn(),
-      findFirst: jest.fn(),
-      findUnique: jest.fn(),
-      update: jest.fn(),
-      delete: jest.fn(),
+      findMany: vi.fn(),
+      create: vi.fn(),
+      findFirst: vi.fn(),
+      findUnique: vi.fn(),
+      update: vi.fn(),
+      delete: vi.fn(),
     },
     subTask: {
-      create: jest.fn(),
-      findUnique: jest.fn(),
-      delete: jest.fn(),
-      update: jest.fn(),
+      create: vi.fn(),
+      findUnique: vi.fn(),
+      delete: vi.fn(),
+      update: vi.fn(),
     },
     user: {
-      findUnique: jest.fn(),
+      findUnique: vi.fn(),
     },
     projectMember: {
-      findUnique: jest.fn(),
+      findUnique: vi.fn(),
     },
   },
 }));
 
-const { prisma } = await import("../prisma.js");
+import { prisma } from "../prisma.js";
 import { ApiError } from "../utils/api-error.js";
-const {
+import {
   getTasksByProjectId,
   createTaskService,
   getTaskByIdService,
@@ -39,7 +39,7 @@ const {
   createSubTaskService,
   updateSubTaskService,
   deleteSubTaskService
-} = await import("./task.service.js");
+} from "./task.service.js";
 
 describe("Task Service", () => {
 

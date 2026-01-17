@@ -1,30 +1,29 @@
-import { jest } from "@jest/globals";
+import { describe, it, expect, afterEach, vi } from "vitest";
 
-jest.unstable_mockModule("../prisma.js", () => ({
+vi.mock("../prisma.js", () => ({
   prisma: {
     user: {
-      findUnique: jest.fn(), 
+      findUnique: vi.fn(), 
     },
     projectMember: {
-      findMany: jest.fn(),
-      upsert: jest.fn(), 
-      findFirst: jest.fn(), 
-      update: jest.fn(),   
-      delete: jest.fn(),
+      findMany: vi.fn(),
+      upsert: vi.fn(), 
+      findFirst: vi.fn(), 
+      update: vi.fn(),   
+      delete: vi.fn(),
     },
     project: {
-      findUnique: jest.fn(),
-      create: jest.fn(),
-      update: jest.fn(),
-      delete: jest.fn(),
+      findUnique: vi.fn(),
+      create: vi.fn(),
+      update: vi.fn(),
+      delete: vi.fn(),
     },
   },
 }));
 
-
-const { prisma } = await import("../prisma.js");
+import { prisma } from "../prisma.js";
 import { ApiError } from "../utils/api-error.js";
-const { 
+import { 
   getProjectsService, 
   getProjectByIdService,
   createProjectService,
@@ -34,7 +33,7 @@ const {
   getProjectMembersService,
   updateMemberRoleService,
   deleteMemberService
-} = await import("./project.service.js");
+} from "./project.service.js";
 
 import pkg from "@prisma/client";
 const { UserRole } = pkg;

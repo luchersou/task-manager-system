@@ -1,45 +1,46 @@
-import { jest } from "@jest/globals";
+import { describe, it, expect, afterEach, vi } from "vitest";
 
-jest.unstable_mockModule("../prisma.js", () => ({
+vi.mock("../prisma.js", () => ({
   prisma: {
     user: {
-      findFirst: jest.fn(),
-      findUnique: jest.fn(),
-      create: jest.fn(),
-      update: jest.fn(),
-      delete: jest.fn(),
+      findFirst: vi.fn(),
+      findUnique: vi.fn(),
+      create: vi.fn(),
+      update: vi.fn(),
+      delete: vi.fn(),
     },
   },
 }));
 
-jest.unstable_mockModule("../utils/password.js", () => ({
-  hashPassword: jest.fn(),
-  comparePassword: jest.fn(),
+vi.mock("../utils/password.js", () => ({
+  hashPassword: vi.fn(),
+  comparePassword: vi.fn(),
 }));
 
-jest.unstable_mockModule("../utils/generateAccessAndRefreshTokens.js", () => ({
-  generateAccessAndRefreshTokens: jest.fn(),
+vi.mock("../utils/generateAccessAndRefreshTokens.js", () => ({
+  generateAccessAndRefreshTokens: vi.fn(),
 }));
 
-jest.unstable_mockModule("jsonwebtoken", () => ({
+vi.mock("jsonwebtoken", () => ({
   default: {
-    verify: jest.fn(),
+    verify: vi.fn(),
   },
 }));
 
 import { ApiError } from "../utils/api-error.js";
-const { prisma } = await import("../prisma.js");
-const jwt = (await import("jsonwebtoken")).default;
-const { generateAccessAndRefreshTokens } = await import("../utils/generateAccessAndRefreshTokens.js");
-const { hashPassword, comparePassword } = await import("../utils/password.js");
-const { 
+import { prisma } from "../prisma.js";
+import jwt from "jsonwebtoken";
+import { generateAccessAndRefreshTokens } from "../utils/generateAccessAndRefreshTokens.js";
+import { hashPassword, comparePassword } from "../utils/password.js";
+import { 
   registerUserService,
   loginService,
   logoutUserService,
   refreshAccessTokenService,
   changeCurrentPasswordService,
   deleteAccountService
- } = await import("./auth.service.js");
+} from "./auth.service.js";
+
 
 describe("registerUserService", () => {
   
