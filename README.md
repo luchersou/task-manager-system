@@ -59,7 +59,7 @@ https://task-manager-system-uqus.onrender.com
 - **HTTP Logging**: Morgan
 - **Security**: CORS, cookie-parser
 - **Deployment**: Render
-- **Testing**: Jest
+- **Testing**: Vitest
 
 ## 🚀 Getting Started
 
