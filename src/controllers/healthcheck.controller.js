@@ -1,4 +1,4 @@
-import { prisma } from "../prisma.js";
+import prisma from "../prisma.js";
 
 const healthCheck = async (req, res) => {
   const healthData = {

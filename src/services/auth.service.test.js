@@ -28,7 +28,7 @@ vi.mock("jsonwebtoken", () => ({
 }));
 
 import { ApiError } from "../utils/api-error.js";
-import { prisma } from "../prisma.js";
+import prisma from "../prisma.js";
 import jwt from "jsonwebtoken";
 import { generateAccessAndRefreshTokens } from "../utils/generateAccessAndRefreshTokens.js";
 import { hashPassword, comparePassword } from "../utils/password.js";
