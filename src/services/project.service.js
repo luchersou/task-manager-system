@@ -1,7 +1,6 @@
 import prisma from "../prisma.js";
 import { ApiError } from "../utils/api-error.js";
-import pkg from "@prisma/client";
-const { UserRole } = pkg;
+import { UserRole } from "../../prisma/generated/prisma/index.js";
 
 export const getProjectsService = async (userId) => {
   const memberships = await prisma.projectMember.findMany({

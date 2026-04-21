@@ -35,8 +35,7 @@ import {
   deleteMemberService
 } from "./project.service.js";
 
-import pkg from "@prisma/client";
-const { UserRole } = pkg;
+import { UserRole } from "../../prisma/generated/prisma/index.js";
 
 describe("ProjectService", () => {
 
