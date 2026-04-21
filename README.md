@@ -255,15 +255,17 @@ Centralized error handling with consistent response format.
 
 ```json
 {
-  "@prisma/client": "^6.19.0",
+  "@prisma/adapter-pg": "^7.7.0",
+  "@prisma/client": "^7.7.0",
   "bcryptjs": "^3.0.3",
   "cookie-parser": "^1.4.7",
   "cors": "^2.8.5",
   "dotenv": "^17.2.3",
   "express": "^5.1.0",
+  "express-rate-limit": "^6.10.0",
   "jsonwebtoken": "^9.0.2",
   "morgan": "^1.10.1",
-  "prisma": "^6.19.0",
+  "prisma": "^7.7.0",
   "zod": "^4.1.12"
 }
 ```
