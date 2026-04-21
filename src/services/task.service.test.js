@@ -1,7 +1,7 @@
 import { describe, it, expect, afterEach, vi } from "vitest";
 
 vi.mock("../prisma.js", () => ({
-  prisma: {
+  default: {
     project: {
       findUnique: vi.fn(),
     },
@@ -28,7 +28,7 @@ vi.mock("../prisma.js", () => ({
   },
 }));
 
-import { prisma } from "../prisma.js";
+import prisma from "../prisma.js";
 import { ApiError } from "../utils/api-error.js";
 import {
   getTasksByProjectId,

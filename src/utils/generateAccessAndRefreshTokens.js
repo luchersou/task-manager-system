@@ -1,5 +1,5 @@
 import { ApiError } from "../utils/api-error.js";
-import { prisma } from "../prisma.js";
+import prisma from "../prisma.js";
 import jwt from "jsonwebtoken";
 
 const generateAccessToken = (user) => {

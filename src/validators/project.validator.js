@@ -1,5 +1,4 @@
-import pkg from "@prisma/client";
-const { UserRole } = pkg;
+import { UserRole } from "../../prisma/generated/prisma/index.js";
 import { z } from "zod";
 
 const getProjectByIdSchema = z.object({

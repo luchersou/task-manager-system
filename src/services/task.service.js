@@ -1,4 +1,4 @@
-import { prisma } from "../prisma.js";
+import prisma from "../prisma.js";
 import { ApiError } from "../utils/api-error.js";
 
 export const getTasksByProjectId = async (projectId) => {

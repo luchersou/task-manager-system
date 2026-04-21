@@ -1,5 +1,4 @@
-import pkg from "@prisma/client";
-const { TaskStatus } = pkg;
+import { TaskStatus } from "../../prisma/generated/prisma/index.js";
 import { z } from "zod";
 
 const getTasksSchema = z.object({

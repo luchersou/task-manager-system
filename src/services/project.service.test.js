@@ -1,15 +1,15 @@
 import { describe, it, expect, afterEach, vi } from "vitest";
 
 vi.mock("../prisma.js", () => ({
-  prisma: {
+  default: {
     user: {
-      findUnique: vi.fn(), 
+      findUnique: vi.fn(),
     },
     projectMember: {
       findMany: vi.fn(),
-      upsert: vi.fn(), 
-      findFirst: vi.fn(), 
-      update: vi.fn(),   
+      upsert: vi.fn(),
+      findFirst: vi.fn(),
+      update: vi.fn(),
       delete: vi.fn(),
     },
     project: {
@@ -21,7 +21,7 @@ vi.mock("../prisma.js", () => ({
   },
 }));
 
-import { prisma } from "../prisma.js";
+import prisma from "../prisma.js";
 import { ApiError } from "../utils/api-error.js";
 import { 
   getProjectsService, 
@@ -35,8 +35,7 @@ import {
   deleteMemberService
 } from "./project.service.js";
 
-import pkg from "@prisma/client";
-const { UserRole } = pkg;
+import { UserRole } from "../../prisma/generated/prisma/index.js";
 
 describe("ProjectService", () => {
 

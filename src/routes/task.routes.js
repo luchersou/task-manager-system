@@ -1,6 +1,5 @@
 import { Router } from "express";
-import pkg from "@prisma/client";
-const { UserRole } = pkg;
+import { UserRole } from "../../prisma/generated/prisma/index.js";
 import { verifyJWT, validateProjectPermission } from "../middlewares/auth.middleware.js";
 import { validate } from "../middlewares/validate.middleware.js";
 import * as schemas from "../validators/task.validator.js";
