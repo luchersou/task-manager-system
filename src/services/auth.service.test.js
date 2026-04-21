@@ -1,7 +1,7 @@
 import { describe, it, expect, afterEach, vi } from "vitest";
 
 vi.mock("../prisma.js", () => ({
-  prisma: {
+  default: {
     user: {
       findFirst: vi.fn(),
       findUnique: vi.fn(),

@@ -1,15 +1,15 @@
 import { describe, it, expect, afterEach, vi } from "vitest";
 
 vi.mock("../prisma.js", () => ({
-  prisma: {
+  default: {
     user: {
-      findUnique: vi.fn(), 
+      findUnique: vi.fn(),
     },
     projectMember: {
       findMany: vi.fn(),
-      upsert: vi.fn(), 
-      findFirst: vi.fn(), 
-      update: vi.fn(),   
+      upsert: vi.fn(),
+      findFirst: vi.fn(),
+      update: vi.fn(),
       delete: vi.fn(),
     },
     project: {
