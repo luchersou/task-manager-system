@@ -1,15 +1,19 @@
 import express from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
-import morgan from "morgan"; 
+import morgan from "morgan";
 
 import authRouter from "./routes/auth.routes.js";
 import projectRouter from "./routes/project.routes.js";
 import taskRouter from "./routes/task.routes.js";
 import healthCheckRouter from "./routes/healthchecker.routes.js";
 import { errorHandler } from "./middlewares/error-handler.middleware.js";
+import { generalLimiter } from "./middlewares/rate-limit.middleware.js";
 
 const app = express();
+
+// Apply general rate limiter to all routes
+app.use(generalLimiter);
 
 app.use(express.json({ limit: "16kb" }));
 app.use(express.urlencoded({ extended: true, limit: "16kb" }));
