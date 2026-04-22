@@ -3,6 +3,7 @@ import { UserRole } from "../../prisma/generated/prisma/index.js";
 import * as projectController from "../controllers/project.controller.js";
 import { validate } from "../middlewares/validate.middleware.js";
 import { validateProjectPermission, verifyJWT } from "../middlewares/auth.middleware.js";
+import { createResourceLimiter } from "../middlewares/rate-limit.middleware.js";
 import { 
   getProjectByIdSchema,
   createProjectSchema,
@@ -24,7 +25,8 @@ router
   .route("/")
   .get(projectController.getProjects)
   .post(
-    validate(createProjectSchema), 
+    createResourceLimiter,
+    validate(createProjectSchema),
     projectController.createProject
   );
 
@@ -50,6 +52,7 @@ router
   .route("/:projectId/members")
   .post(
     validateProjectPermission(MANAGER_ROLES),
+    createResourceLimiter,
     validate(addMembersToProjectSchema),
     projectController.addMembersToProject
   )
@@ -73,6 +76,6 @@ router
     validateProjectPermission(ADMIN_ROLES),
     validate(updateMemberRoleSchema),
     projectController.updateMemberRole
-  )
+  );
 
 export default router;
