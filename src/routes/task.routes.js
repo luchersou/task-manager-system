@@ -2,6 +2,7 @@ import { Router } from "express";
 import { UserRole } from "../../prisma/generated/prisma/index.js";
 import { verifyJWT, validateProjectPermission } from "../middlewares/auth.middleware.js";
 import { validate } from "../middlewares/validate.middleware.js";
+import { createResourceLimiter } from "../middlewares/rate-limit.middleware.js";
 import * as schemas from "../validators/task.validator.js";
 import * as taskController from "../controllers/task.controller.js";
 
@@ -20,6 +21,7 @@ router
   )
   .post(
     validateProjectPermission(CONTRIBUTOR_ROLES),
+    createResourceLimiter,
     validate(schemas.createTaskSchema),
     taskController.createTask
   );
@@ -46,6 +48,7 @@ router
   .route("/:taskId/subtasks")
   .post(
     validateProjectPermission(CONTRIBUTOR_ROLES),
+    createResourceLimiter,
     validate(schemas.createSubTaskSchema),
     taskController.createSubTask
   );
