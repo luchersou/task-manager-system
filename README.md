@@ -9,8 +9,6 @@ The API is deployed and available at:
 https://task-manager-system-uqus.onrender.com
 ```
 
-**Base API URL**: `https://task-manager-system-uqus.onrender.com/api/v1`
-
 > **Note**: The application is hosted on Render's free tier, so the first request may take a few seconds as the server spins up from sleep mode.
 
 ## 📋 Table of Contents
@@ -262,7 +260,7 @@ Centralized error handling with consistent response format.
   "cors": "^2.8.5",
   "dotenv": "^17.2.3",
   "express": "^5.1.0",
-  "express-rate-limit": "^6.10.0",
+  "express-rate-limit": "^6.11.2",
   "jsonwebtoken": "^9.0.2",
   "morgan": "^1.10.1",
   "prisma": "^7.7.0",
