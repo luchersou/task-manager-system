@@ -56,12 +56,12 @@ export const loginService = async ({ identifier, password }) => {
   });
 
   if (!user) {
-    throw new ApiError(400, "Invalid credentials");
+    throw new ApiError(401, "Invalid credentials");
   }
 
   const isPasswordValid = await comparePassword(password, user.password);
   if (!isPasswordValid) {
-    throw new ApiError(400, "Invalid credentials");
+    throw new ApiError(401, "Invalid credentials");
   }
 
   const { accessToken, refreshToken } = await generateAccessAndRefreshTokens(user.id);
